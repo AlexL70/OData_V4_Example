@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ProductService.Models;
 using System.Web.Http;
+using System.Web.OData.Builder;
+using System.Web.OData.Extensions;
 
 namespace ProductService
 {
@@ -10,6 +10,13 @@ namespace ProductService
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            ODataModelBuilder builder = new ODataConventionModelBuilder();
+            builder.EntitySet<Product>($"{nameof(Product)}s");
+            config.MapODataServiceRoute(
+                routeName: "ODataRoute",
+                routePrefix: null,
+                model: builder.GetEdmModel()
+                );
 
             // Web API routes
             config.MapHttpAttributeRoutes();
