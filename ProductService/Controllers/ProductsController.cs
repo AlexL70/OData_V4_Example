@@ -60,5 +60,66 @@ namespace ProductService.Controllers
             await db.SaveChangesAsync();
             return Created(product);
         }
+
+        public async Task<IHttpActionResult> Patch([FromODataUri] int key, Delta<Product> delta)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var entity = await db.Products.FindAsync(key);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            delta.Patch(entity);
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (ProductExists(key))
+                {
+                    throw;
+                }
+                else
+                {   //  Product was deleted by another transaction
+                    return NotFound();
+                }
+            }
+
+            return Updated(entity);
+        } 
+
+        public async Task<IHttpActionResult> Put([FromODataUri] int key, Product update)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (key != update.Id)
+            {
+                return BadRequest($"Requested Id = {key} does not comply with update Id {update.Id}. Rejected.");
+            }
+            db.Entry(update).State = EntityState.Modified;
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (ProductExists(key))
+                {
+                    throw;
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            return Updated(update);
+        }
     }
 }
