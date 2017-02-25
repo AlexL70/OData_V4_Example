@@ -14,7 +14,7 @@ namespace ProductService
             builder.EntitySet<Product>($"{nameof(Product)}s");
             config.MapODataServiceRoute(
                 routeName: "ODataRoute",
-                routePrefix: null,
+                routePrefix: "odata",
                 model: builder.GetEdmModel()
                 );
 
