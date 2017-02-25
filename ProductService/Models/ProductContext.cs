@@ -6,6 +6,6 @@ namespace ProductService.Models
     {
         public ProductContext() : base($"name={nameof(ProductContext)}") { }
 
-        public DbSet<Product> Product { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }
